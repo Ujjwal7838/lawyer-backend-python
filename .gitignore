@@ -1,0 +1,13 @@
+# Python virtual environment
+venv/
+env/
+__pycache__/
+
+# Database file (agar use kar raha hai)
+*.sqlite3
+
+# Secret environment variables
+.env
+
+# Mac system files
+.DS_Store
