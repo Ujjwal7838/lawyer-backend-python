@@ -27,6 +27,18 @@ app.json_encoder = CustomJSONEncoder
 bcrypt = Bcrypt(app)
 CORS(app, resources={r"/api/*": {"origins": "*"}})
 app.config['SECRET_KEY'] = 'this_is_a_very_secret_key'
+# ==================== SIMPLE TEST ROUTES ====================
+
+@app.route('/test', methods=['GET'])
+def test_route():
+    return jsonify({"message": "✅ Hello from your Python backend!"})
+
+@app.route('/')
+def home():
+    return jsonify({"message": "🚀 Backend is running!"})
+
+# ==================== USER & AUTH ROUTES ====================
+# ... tumhara existing code yahi rahega
 
 # --- DATABASE CONNECTION POOL ---
 try:
