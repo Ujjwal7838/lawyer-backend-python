@@ -58,7 +58,7 @@ def lawyers_test():
 
 # ==================== USER & AUTH ROUTES ====================
  
-'''
+
 try:
     pool = PooledDB(
         creator=pymysql, 
@@ -76,7 +76,7 @@ try:
 except Exception as e:
     print(f"❌ Error creating database connection pool: {e}")
     sys.exit(1)
-'''
+
 # --- Authentication Decorator (Token Check) ---
 def token_required(f):
     @wraps(f)
