@@ -462,5 +462,7 @@ def get_dashboard_stats(current_user_id, current_user_role):
         if connection: connection.close()
 
  
+# --- RUN THE APP ---
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, debug=False)
+    # Development server - only for local
+    app.run(debug=True, port=5001)
