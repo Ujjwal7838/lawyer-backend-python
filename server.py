@@ -36,11 +36,29 @@ def test_route():
 @app.route('/')
 def home():
     return jsonify({"message": "🚀 Backend is running!"})
+# ==================== SIMPLE TEST ROUTES ====================
+
+@app.route('/test', methods=['GET'])
+def test_route():
+    return jsonify({"message": "✅ Hello from your Python backend!"})
+
+@app.route('/')
+def home():
+    return jsonify({"message": "🚀 Backend is running!"})
+
+@app.route('/api/register', methods=['GET'])
+def register_test():
+    return jsonify({"message": "Register route working!"})
+
+@app.route('/api/lawyers', methods=['GET'])
+def lawyers_test():
+    return jsonify({"message": "Lawyers route working!", "lawyers": []})
+
+# ==================== USER & AUTH ROUTES ====================    
 
 # ==================== USER & AUTH ROUTES ====================
-# ... tumhara existing code yahi rahega
-
-# --- DATABASE CONNECTION POOL ---
+ 
+'''
 try:
     pool = PooledDB(
         creator=pymysql, 
@@ -58,6 +76,7 @@ try:
 except Exception as e:
     print(f"❌ Error creating database connection pool: {e}")
     sys.exit(1)
+'''
 # --- Authentication Decorator (Token Check) ---
 def token_required(f):
     @wraps(f)
