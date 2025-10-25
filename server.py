@@ -38,24 +38,7 @@ def home():
     return jsonify({"message": "🚀 Backend is running!"})
 # ==================== SIMPLE TEST ROUTES ====================
 
-@app.route('/test', methods=['GET'])
-def test_route():
-    return jsonify({"message": "✅ Hello from your Python backend!"})
-
-@app.route('/')
-def home():
-    return jsonify({"message": "🚀 Backend is running!"})
-
-@app.route('/api/register', methods=['GET'])
-def register_test():
-    return jsonify({"message": "Register route working!"})
-
-@app.route('/api/lawyers', methods=['GET'])
-def lawyers_test():
-    return jsonify({"message": "Lawyers route working!", "lawyers": []})
-
-# ==================== USER & AUTH ROUTES ====================    
-
+ 
 # ==================== USER & AUTH ROUTES ====================
  
 
