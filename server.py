@@ -3,6 +3,7 @@ from flask_bcrypt import Bcrypt
 from flask_cors import CORS
 import pymysql.cursors
 import sys
+import os
 import jwt
 import datetime
 from dbutils.pooled_db import PooledDB
@@ -30,16 +31,21 @@ app.config['SECRET_KEY'] = 'this_is_a_very_secret_key'
 # --- DATABASE CONNECTION POOL ---
 try:
     pool = PooledDB(
-        creator=pymysql, host='127.0.0.1', port=8889, user='root',
-        password='root', database='lawyer_app_db',
-        cursorclass=pymysql.cursors.DictCursor, maxconnections=5, blocking=True,
+        creator=pymysql, 
+        host=os.environ.get('DB_HOST', '127.0.0.1'),
+        port=int(os.environ.get('DB_PORT', 8889)),
+        user=os.environ.get('DB_USER', 'root'),
+        password=os.environ.get('DB_PASSWORD', 'root'),
+        database=os.environ.get('DB_NAME', 'lawyer_app_db'),
+        cursorclass=pymysql.cursors.DictCursor, 
+        maxconnections=5, 
+        blocking=True,
         charset='utf8mb4'
     )
     print("✅ Database connection pool created successfully.")
 except Exception as e:
     print(f"❌ Error creating database connection pool: {e}")
     sys.exit(1)
-
 # --- Authentication Decorator (Token Check) ---
 def token_required(f):
     @wraps(f)
@@ -455,6 +461,6 @@ def get_dashboard_stats(current_user_id, current_user_role):
     finally:
         if connection: connection.close()
 
-# --- RUN THE APP ---
+ 
 if __name__ == '__main__':
-    app.run(debug=True, port=5001)
+    app.run(host='0.0.0.0', port=5000, debug=False)
