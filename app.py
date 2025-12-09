@@ -29,7 +29,8 @@ class CustomJSONEncoder(json.JSONEncoder):
 app = Flask(__name__)
 app.json_encoder = CustomJSONEncoder
 bcrypt = Bcrypt(app)
-CORS(app, resources={r"/api/*": {"origins": "*"}})
+# Final CORS Fix: Only allowing the Vercel Frontend URL
+CORS(app, resources={r"/*": {"origins": "https://lawyer-website-iota.vercel.app"}})
 app.config['SECRET_KEY'] = 'this_is_a_very_secret_key'
 # ==================== SIMPLE TEST ROUTES ====================
 
