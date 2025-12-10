@@ -2,9 +2,9 @@ Flask
 Flask-Bcrypt
 flask-cors
 gunicorn
-PyJWT
+PyJWT==2.8.0
 PyMySQL
-cryptography
+cryptography==41.0.4
 python-dateutil
 DBUtils
 click
