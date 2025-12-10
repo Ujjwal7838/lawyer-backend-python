@@ -54,23 +54,41 @@ def home():
 # --- GOOGLE CLOUD CRASH GUARD START ---
 pool = None
 try:
+    # Check if DB_HOST environment variable starts with /cloudsql/ (for Cloud Run)
+    db_host_value = os.environ.get('DB_HOST')
+    
+    if db_host_value and db_host_value.startswith('/cloudsql/'):
+        # For Cloud Run: Use unix_socket
+        conn_params = {
+            'unix_socket': db_host_value,
+            'user': os.environ.get('DB_USER'),
+            'password': os.environ.get('DB_PASSWORD'),
+            'database': os.environ.get('DB_NAME'),
+            'cursorclass': pymysql.cursors.DictCursor, 
+            'charset': 'utf8mb4'
+        }
+    else:
+        # For Local Development: Use host/port
+        conn_params = {
+            'host': db_host_value or '127.0.0.1',
+            'port': int(os.environ.get('DB_PORT', 8889)),
+            'user': os.environ.get('DB_USER', 'root'),
+            'password': os.environ.get('DB_PASSWORD', 'root'),
+            'database': os.environ.get('DB_NAME', 'lawyer_app_db'),
+            'cursorclass': pymysql.cursors.DictCursor, 
+            'charset': 'utf8mb4'
+        }
+
     pool = PooledDB(
         creator=pymysql, 
-        host=os.environ.get('DB_HOST', '127.0.0.1'),
-        port=int(os.environ.get('DB_PORT', 8889)),
-        user=os.environ.get('DB_USER', 'root'),
-        password=os.environ.get('DB_PASSWORD', 'root'),
-        database=os.environ.get('DB_NAME', 'lawyer_app_db'),
-        cursorclass=pymysql.cursors.DictCursor, 
         maxconnections=5, 
         blocking=True,
-        charset='utf8mb4'
+        **conn_params # conn_params ko yahan unpack kar rahe hain
     )
     print("✅ Database connection pool created successfully.")
 except Exception as e:
     print(f"⚠️ Database fail hua (Koi baat nahi, app chalne do): {e}")
     pool = None 
-    # Humne sys.exit(1) hata diya taaki server band na ho
 # --- GOOGLE CLOUD CRASH GUARD END ---
 
 # --- Authentication Decorator (Token Check) ---
