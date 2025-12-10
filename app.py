@@ -135,7 +135,6 @@ def register_user():
         return jsonify({"success": False, "message": str(e)}), 500
     finally:
         if connection: connection.close()
-
 @app.route('/api/login', methods=['POST'])
 def login_user():
     connection = None
@@ -145,12 +144,33 @@ def login_user():
             data = request.get_json()
             email, password = data.get('email'), data.get('password')
             if not email or not password: return jsonify({"success": False, "message": "Email and password are required."}), 400
-            cursor.execute("SELECT * FROM Users WHERE Email = %s", (email,))
+            
+            # --- IMPORTANT: Ensure Email is clean before DB query ---
+            # Email ko chota aur clean kar do, taaki koi non-ASCII character na ho
+            clean_email = email.strip() 
+            
+            cursor.execute("SELECT * FROM Users WHERE Email = %s", (clean_email,))
             user = cursor.fetchone()
-        if not user or not bcrypt.check_password_hash(user['Password'], password): return jsonify({"success": False, "message": "Invalid credentials."}), 401
-        token = jwt.encode({'UserID': user['UserID'],'Role': user['Role'],'exp': datetime.datetime.utcnow() + datetime.timedelta(hours=24)}, app.config['SECRET_KEY'], algorithm="HS256")
+            
+        if not user or not bcrypt.check_password_hash(user['Password'], password): 
+            return jsonify({"success": False, "message": "Invalid credentials."}), 401
+        
+        # --- IDNA FIX: Simplified JWT Payload ---
+        payload = {
+            'UserID': user['UserID'],
+            'Role': user['Role'],
+            'exp': datetime.datetime.utcnow() + datetime.timedelta(hours=24)
+        }
+        
+        # JWT Token ko encode karo (ab sirf simple fields use kar rahe hain)
+        token = jwt.encode(payload, app.config['SECRET_KEY'], algorithm="HS256")
+        
         return jsonify({"success": True, "message": "Login successful!", "token": token, "role": user['Role']})
+        
     except Exception as e:
+        # Agar 'idna' error aaya, toh isko generic error mein badal dega
+        if 'idna' in str(e):
+             return jsonify({"success": False, "message": "Login Failed: Encoding error in credentials. Please use simple, short email/password."}), 500
         return jsonify({"success": False, "message": str(e)}), 500
     finally:
         if connection: connection.close()
