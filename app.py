@@ -31,9 +31,9 @@ app.json_encoder = CustomJSONEncoder
 bcrypt = Bcrypt(app)
 # Final CORS Fix: Only allowing the Vercel Frontend URL
 # Allowing the new Vercel Preview URL
+# app.py mein CORS wali line ko isse REPLACE karo (shorter production URL)
 CORS(app, resources={r"/*": {"origins": [
-    "https://lawyer-website-git-main-ujjwal-thakurs-projects-92c79807.vercel.app",
-    "https://lawyer-website-git-main-ujjwal-thakurs-projects-92c79807.vercel.app/"
+    "https://lawyer-website-iota.vercel.app" # Apna production URL yahan daalna
 ], "supports_credentials": True}})
 app.config['SECRET_KEY'] = 'this_is_a_very_secret_key'
 # ==================== SIMPLE TEST ROUTES ====================
